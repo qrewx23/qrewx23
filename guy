@@ -1,0 +1,60 @@
+  def ui_process(self):
+        """
+        Ui主程序
+        :param
+        :return:
+        """
+        root = Tk()
+        self.root = root
+        # 设置窗口位置
+        root.title("豆瓣电影小助手(可筛选、下载自定义电影)")
+        self.center_window(root, 1000, 565)
+        root.resizable(0, 0)  # 框体大小可调性，分别表示x,y方向的可变性
+
+        # 从排行榜 电影搜索布局开始
+        # 容器控件
+        labelframe = LabelFrame(root, width=660, height=300, text="搜索电影")
+        labelframe.place(x=5, y=5)
+        self.labelframe = labelframe
+
+        # 电影类型
+        L_typeId = Label(labelframe, text='电影类型')
+        L_typeId.place(x=0, y=10)
+        self.L_typeId = L_typeId
+
+        #下拉列表框
+        comvalue = StringVar()
+        C_type = ttk.Combobox(labelframe, width=5, textvariable=comvalue, state='readonly')
+        # 将影片类型输入到下拉列表框中
+        jsonMovieData = loads(movieData) #json数据
+        movieList = []
+        for subMovieData in jsonMovieData: #对每一种类的电影题材进行操作
+            movieList.append(subMovieData['title'])
+        C_type["values"] = movieList #初始化
+        C_type.current(9)  # 选择第一个
+        C_type.place(x=65, y=8)
+        self.C_type = C_type
+
+        # 欲获取的电影数量
+        L_count = Label(labelframe, text='获取数量=')
+        L_count.place(x=150, y=10)
+        self.L_count = L_count
+
+        # 文本框
+        T_count = Entry(labelframe, width=5)
+        T_count.delete(0, END)
+        T_count.insert(0, '100')
+        T_count.place(x=220, y=7)
+        self.T_count = T_count
+
+        # 评分
+        L_rating = Label(labelframe, text='影片评分>')
+        L_rating.place(x=280, y=10)
+        self.L_rating = L_rating
+
+        # 文本框
+        T_rating = Entry(labelframe, width=5)
+        T_rating.delete(0, END)
+        T_rating.insert(0, '8.0')
+        T_rating.place(x=350, y=7)
+        self.T_rating = T_rating
