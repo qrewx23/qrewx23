@@ -1,0 +1,12 @@
+def shrink(p, speed):
+    x, y = p.pos
+    vx, vy = p.vel
+    dist = math.hypot(x, y)
+    if dist < 1:
+        dist = 1
+    dx = x / dist
+    dy = y / dist
+    force = (-10 / (dist ** 2)) * speed
+    dvx = force * dx
+    dvy = force * dy
+    p.vel = (vx+dvx, vy+dvy)
