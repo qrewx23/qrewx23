@@ -1,0 +1,38 @@
+# 自动选择dropdown的第一个选option
+    @app.callback(
+        dash.dependencies.Output('dropdown_time_1', 'value'),
+        [
+            dash.dependencies.Input('dropdown_time_1', 'options')
+        ]
+    )
+    def update(available_options):
+        # print(available_options)
+        if(available_options):
+            return available_options[0]['value']
+        else:
+            # 取消更新页面数据
+            raise dash.exceptions.PreventUpdate("cancel the callback")
+
+
+
+
+
+
+    # dropdown_time_1的value发生改变时的回调
+    @app.callback(
+        dash.dependencies.Output('graph_day_diff_time_count', 'figure'),
+        [
+            dash.dependencies.Input('dropdown_time_1', 'value'),
+            dash.dependencies.Input('store_memory_history_data', 'data')
+        ]
+    )
+    def update(date_time_value, store_memory_history_data):
+        if(date_time_value):
+            if store_memory_history_data:
+                history_data = store_memory_history_data['history_data']
+                figure = plot_scatter_website_diff_time(date_time_value, history_data)
+                return figure
+        else:
+            # 取消更新页面数据
+            raise dash.exceptions.PreventUpdate("cancel the callback")
+
