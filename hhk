@@ -1,0 +1,37 @@
+
+    <script>
+        $("#id").keyup(
+            function () {
+                if(isNaN($("#id").val())){
+                    $("#info").text("提示:账号只能为数字");
+                }
+                else {
+                    $("#info").text("");
+                }
+            }
+        )
+
+        // 记住登录信息
+        function rememberLogin(username, password, checked) {
+            Cookies.set('loginStatus', {
+                username: username,
+                password: password,
+                remember: checked
+            }, {expires: 30, path: ''})
+        }
+
+        // 若选择记住登录信息，则进入页面时设置登录信息
+        function setLoginStatus() {
+            var loginStatusText = Cookies.get('loginStatus')
+
+            if (loginStatusText) {
+                var loginStatus
+                try {
+                    loginStatus = JSON.parse(loginStatusText);
+                    $('#id').val(loginStatus.username);
+                    $('#passwd').val(loginStatus.password);
+                    $("#remember").prop('checked',true);
+                } catch (__) {}
+            }
+        }
+
