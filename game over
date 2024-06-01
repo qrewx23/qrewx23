@@ -1,0 +1,26 @@
+void GameEnd(pGSnake ps) {
+	system("cls");
+	SetPos(32, 12);
+	switch (ps->_Status) {
+	case END_NORMAL:
+		printf("游戏已结束。");
+		break;
+	case KILL_BY_WALL:
+		printf("蛇撞墙！游戏结束。");
+		break;
+	case KILL_BY_SELF:
+		printf("蛇撞到自己！游戏结束。");
+		break;
+	}
+ 
+	printf("总得分：%d", ps->_Score);
+	//
+	pSnakeNode cur = ps->_pSnake;
+	while (cur) {
+		pSnakeNode del = cur;
+		cur = cur->next;
+		free(del);
+	}
+	SetPos(0, 26);
+ 
+}
