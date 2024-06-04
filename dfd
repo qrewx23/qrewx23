@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- <script src="vue.global.js"></script> -->
+    
+</head>
+<body>
+    <div id="app">
+        {{number}}<br>
+        <!-- <img src="/image/test2.jpg"><br> -->
+        <img :src=`/image/${number}.jpg` style="width: 300px; height: 200px;"><br>
+ 
+        <button @click="prev">上一张</button>
+        <button @click="next">下一张</button><br>
+        <ul>
+            <li v-for="value in 3">
+                <a href="#" @click="jump(value)">{{value}}</a>
+            </li>
+            
+        </ul>
+    </div>
+    <script type="module">
+        import {createApp, ref} from './vue.esm-browser.js'
+        // const {createApp, reactive} = Vue
+        createApp({
+            // setup选项，用于设置响应式数据和方法等
+            setup(){ 
+                const number = ref(1)
+                      
+                const prev = () =>{
+                    number.value--
+                    if (number.value == 0){
+                        number.value = 3
+                    }
+                }
+ 
+                const next = () =>{
+                    number.value++
+                    if (number.value == 4){
+                        number.value = 1
+                    }
+                }
+ 
+                const jump = (value) =>{
+                    number.value = value
+                }
+                return{
+                    number,
+                    prev,
+                    next, 
+                    jump   
+                }
+            }
+        }).mount("#app")
+        // mount为挂载
+    </script>
+</body>
+</html>
