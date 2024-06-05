@@ -1,0 +1,14 @@
+abstract class SaleTodayOnly {
+    abstract int dollarsOff();
+}
+
+public class Store {
+    public SaleTodayOnly sale = new SaleTodayOnly() {
+        int dollarsOff() {
+            return 3;
+        }
+    };
+}
+
+Store store = new Store();
+System.out.println(store.sale.dollarsOff()); // 应输出3
