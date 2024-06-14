@@ -1,0 +1,76 @@
+       // 取消按钮点击事件
+        $('#cancelBtn').on('click', function () {
+            // 隐藏表单
+            $('#editcontent').hide();
+            // 清空输入框
+            $('#editcontent input').val('');
+        });
+ 
+        // 定义刷新表格数据的函数
+        function refreshTable() {
+            fetch("/get_student_data")
+                .then(response => response.json())
+                .then(data => {
+                    // 获取从后端获取的学生信息数据
+                    var studentData = data.data;
+                    $("#table").reponsetable("setData", studentData);
+                })
+                .catch(error => console.error('获取学生信息数据时发生错误:', error));
+        }
+        // 散点图按钮点击事件
+        function scatterPlot(obj) {
+            // 散点图按钮点击事件处理逻辑
+            // ...
+        }
+ 
+        // 雷达图按钮点击事件
+        function radarChart(obj) {
+            // 雷达图按钮点击事件处理逻辑
+            // ...
+        }
+ 
+        // 职业规划按钮点击事件
+        function careerPlan(obj) {
+            // 职业规划按钮点击事件处理逻辑
+            // ...
+        }
+        //删除
+        // 删除按钮点击事件
+window.deleteRecord = function (obj) {
+    var currentRowData = getCurrentRowData(obj);
+ 
+    // 发送删除请求
+    $.ajax({
+        type: 'POST',
+        url: '/deleteRecord',
+        data: JSON.stringify(currentRowData),
+        contentType: 'application/json',
+        success: function (response) {
+            if (response.success) {
+                console.log('数据删除成功');
+                // 刷新表格数据
+                refreshTable();
+            } else {
+                console.error('数据删除失败');
+            }
+        },
+        error: function (error) {
+            console.error('删除数据时发生错误:', error);
+        }
+    });
+}
+ 
+// 获取当前行的学生信息
+function getCurrentRowData(obj) {
+    var currentRow = $(obj).closest('tr');
+    var rowData = {
+        name: currentRow.find('td[data-field="name"]').text(),
+        g1: currentRow.find('td[data-field="g1"]').text(),
+        g2: currentRow.find('td[data-field="g2"]').text(),
+        // 添加其他成绩项
+    };
+    return rowData;
+}
+ 
+ 
+  
