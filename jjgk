@@ -1,0 +1,40 @@
+# 分析备注名称
+def analyze_remark_name():
+    close_partner_dict = {'宝宝,猪,仙女,亲爱,老婆':0, '老公':0, '父亲,爸':0, '母亲,妈':0, '闺蜜,死党,基友':0}
+
+    # 遍历好友数据
+    for user in friends:
+        for key in close_partner_dict.keys():
+            # 判断该好友备注名是否包含close_partner_dict中的任意一个key
+            name = key.split(',')
+            for sub_name in name:
+                if(sub_name in user.remark_name):
+                    close_partner_dict[key] += 1
+                    break
+
+
+    name_list = ['最重要的她', '最重要的他', '爸爸', '妈妈', '死党']
+    num_list = [x for x in close_partner_dict.values()]
+
+    pie = Pie()
+    pie.add("可能是你最亲密的人", [list(z) for z in zip(name_list, num_list)])
+    pie.set_global_opts(title_opts=opts.TitleOpts(title="可能是你最亲密的人"))
+    pie.set_series_opts(label_opts=opts.LabelOpts(formatter="{b}: {c}"))
+    pie.render('data/你最亲密的人.html')
+
+
+
+# 分析个性签名
+def analyze_signature():
+
+    # 个性签名列表
+    data = []
+    for user in friends:
+
+        # 清除签名中的微信表情emoj，即<span class.*?</span>
+        # 使用正则查找并替换方式，user.signature为源文本，将<span class.*?</span>替换成空
+        new_signature = re.sub(re.compile(r"<span class.*?</span>", re.S), "", user.signature)
+
+        # 只保留签名为1行的数据，过滤为多行的签名
+        if(len(new_signature.split('\n')) == 1):
+            data.append(new_signature)
