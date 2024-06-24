@@ -1,0 +1,14 @@
+@app.route('/upload_video', methods=['POST'])
+def upload_video():
+    video_file = request.files['video']  # 假设表单中文件字段名为'video'
+    
+    if video_file.filename == '':
+        return "No video selected", 400
+    
+    # 可以在这里添加额外的验证，比如检查文件大小、视频格式等
+    if video_file and allowed_file(video_file.filename, video_extensions):  # 假设allowed_file检查文件类型和大小
+        filename = secure_filename(video_file.filename)
+        video_file.save(os.path.join(app.config['VIDEO_UPLOAD_FOLDER'], filename))
+        return "Video uploaded successfully"
+    else:
+        return "Invalid video file or other error", 400
