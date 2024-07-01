@@ -1,0 +1,16 @@
+    //家居按钮
+    MenuButton * sensor_button=new MenuButton(":/picture/sensor.png","",245,245);
+    //time1= new QTimer(this);
+    sensor_button->setParent(this);
+    sensor_button->move(45,300);
+    //硬件数据按下处理
+    connect(sensor_button,&MenuButton::clicked,[=](){
+        sensor_button->zoom1();//弹跳
+        sensor_button->zoom2();
+        time1->start(500);
+        connect(time1,&QTimer::timeout,[=](){
+            time1->stop();
+            my_pro->close();
+            my_pro->start("./senor");});
+        });
+ 
