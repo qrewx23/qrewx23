@@ -1,0 +1,91 @@
+import pandas as pd  # pandas，用于写入Excel文件
+import requests  # python基础爬虫库
+from lxml import etree  # 可以将网页转换为Elements对象
+import time  # 防止爬取过快可以睡眠一秒
+ 
+def get_ip():
+    host = ''  # 主机
+    user_name = ''  # 用户名
+    password = ''  # 密码
+    proxy_url = f'http://{user_name}:{password}@{host}'  # 将上面三个参数拼接为专属代理IP获取网址
+    proxies = {
+        'http': proxy_url,
+        'https': proxy_url
+    }
+    url = "http://lumtest.com/myip.json"  # 默认获取的接口（不用修改）
+    response = requests.get(url, proxies=proxies, timeout=10).text  # 发送请求获取IP
+    # print('代理IP详情信息：',response)
+    response_dict = eval(response)  # 将字符串转为字典，方便我们提取代理IP
+    ip = response_dict['ip']
+    # print('IP：',ip)
+    return ip
+ 
+def get_html_str(url):
+    """发送请求，获取网页源码"""
+    # 请求头模拟浏览器（注意这里一定添加自己已经登录的cookie才可以）
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36',
+        'cookie': ''
+    }
+    # 添加代理IP
+    proxies = get_ip()
+    # proxies = {}
+    # 添加请求头和代理IP发送请求
+    response = requests.get(url, headers=headers, proxies=proxies)
+    # 获取网页源码
+    html_str = response.text
+    # 返回网页源码
+    return html_str
+ 
+def get_data(html_str, page, data_list):
+    """提取数据写入列表"""
+    # 将html字符串转换为etree对象方便后面使用xpath进行解析
+    html_data = etree.HTML(html_str)
+    # 利用xpath取到所有的li标签
+    li_list = html_data.xpath('//div[@dd_name="普通商品区域"]/ul/li')
+    # 打印一下li标签个数
+    # print(len(li_list))
+    # 遍历li_list列表取到某一个商品的对象标签
+    for li in li_list:
+        # 标题
+        title = li.xpath('.//a[@class="pic"]/@title')
+        title = ''.join(title)
+        # 商品链接
+        goods_url = 'https:' + li.xpath('.//a[@class="pic"]/@href')[0]
+        # 价格
+        price = li.xpath('.//p[@class="price"]/span[@class="price_n"]/text()')[0]
+        print(price)
+        # 定价
+        pre_price = li.xpath('.//p[@class="price"]/span[@class="price_r"]/text()')[0]
+        # 图片链接
+        img_url = 'https:' + li.xpath('.//a[@class="pic"]/img/@src')[0]
+        print({'页码': page, '标题': title, '价格': price, '定价': pre_price, '商品链接': goods_url,
+               '图片链接': img_url})
+        data_list.append(
+            {'页码': page, '标题': title, '价格': price, '定价': pre_price, '商品链接': goods_url,
+             '图片链接': img_url})
+ 
+def to_excel(data_list):
+    """写入Excel"""
+    df = pd.DataFrame(data_list)
+    df.drop_duplicates()  # 删除重复数据
+    df.to_excel('当当采集数据集.xlsx')
+def main():
+    # 1. 设置爬取的关键词和页数
+    keyword = '手机'
+    page_num = 1  # 爬取的页数
+    data_list = []  # 空列表用于存储数据
+    for page in range(1, page_num + 1):
+        url = f'https://search.dangdang.com/?key={keyword}&act=input&page_index={page}'
+        print(url)
+        # 2. 获取指定页的网页源码
+        html_str = get_html_str(url)
+        # print(html_str)
+        # 3. 提取数据
+        get_data(html_str, page, data_list)
+        time.sleep(1)
+    # 4. 写入Excel
+    to_excel(data_list)
+if __name__ == '__main__':
+    main()
+ 
